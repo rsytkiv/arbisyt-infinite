@@ -12,7 +12,7 @@ const bot = new TelegramBot('6937685262:AAGsahvt9YMj5Mi5XjIS7WZhU9hLxCnXalU', { 
 bot.on('message', async ({ from, chat, text, ...e }) => {
     const chatId = chat?.id;
     const userId = from?.id;
-
+    console.log('q');
     if (text.startsWith('/adduser')) {
         // Check if the sender is the admin
         if (userId === ADMIN_USER_ID) {
