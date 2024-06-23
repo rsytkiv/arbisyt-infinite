@@ -15,28 +15,16 @@ const stringRepresentation = (obj) => Object.entries(obj)
     .map(([key, value]) => `${key}: ${value}`)
     .join(', ');
 
-const startTicker = async (bot, chatId) => {
-    try {
-        // const response = await getBinanceTokenPrice('GALAUSDT');
-        // const oneresponse = await getOneInchTokenPrice();
-        // console.log(oneresponse);
-    } catch (error) {
-        console.error('Error:', error.message);
-        return []; // Return an empty array in case of error
-    }
-};
-
 const help = (bot, chatId) => {
     return bot.sendMessage(
         chatId,
-        `Available commands:\n/getticker - Get data about pair, format: '/getticker btc'\n/snipe - Find arbitrage`,
+        `Available commands:\n/getticker - Get data about pair, format: '/getticker btc'\n/snipe exchanges | price change (%) | pairs - Find arbitrage\n/snipe - Snipe for token price changes, format: /snipe binance,mexc 15 usdt,usdc`,
     );
 };
 
 module.exports = {
     separateBySpaces,
     isAuthorized,
-    startTicker,
     help,
     stringRepresentation,
 };

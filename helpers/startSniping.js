@@ -1,33 +1,49 @@
 const ccxt = require('ccxt');
 
-const exchanges = ['binance', 'bybit'];
+const { logErrorToFile } = require('./logError');
+const { PRICE_CHANGE_THRESHOLD, DEFAULT_EXCHANGES } = require('../constants');
 
-const PRICE_CHANGE_THRESHOLD = 10;
 const TIME_WINDOW = 10 * 60 * 1000;
 
 const priceHistory = {};
 const sentOpportunities = new Set();
 
-const sniper = async (bot, chatId) => {
+const sniper = async (
+    bot,
+    chatId,
+    exchanges = DEFAULT_EXCHANGES,
+    changePercentage = PRICE_CHANGE_THRESHOLD,
+    pairs = ['USDT'],
+) => {
     try {
-        console.log(sentOpportunities);
         let currentPrices = [];
-
+        console.log('working...');
         // Fetch price data from all exchanges
         for (let exchangeId of exchanges) {
             try {
                 const exchange = new ccxt[exchangeId]();
                 const tickers = await exchange.fetchTickers();
 
+                // Filter tickers to include only those that end with USDT or USDC
+                // const filteredTickers = Object.keys(tickers)
+                //     .filter(symbol => pairs.some(pair => symbol.endsWith(pair)))
+                //     .reduce((obj, key) => {
+                //         obj[key] = tickers[key];
+                //         return obj;
+                //     }, {});
+                // console.log(tickers);
                 const data = Object.keys(tickers).map(symbol => ({
                     exchange: exchangeId,
                     symbol,
-                    price: tickers[symbol].last
+                    price: tickers[symbol] ? tickers[symbol].last : null
                 }));
 
                 currentPrices = currentPrices.concat(data);
             } catch (error) {
+                bot.sendMessage(chatId, `Error fetching data from ${exchangeId}`);
                 console.error(`Error fetching data from ${exchangeId}:`, error);
+
+                logErrorToFile(error, chatId, bot);
             }
         }
 
@@ -48,7 +64,7 @@ const sniper = async (bot, chatId) => {
             const oldestPrice = priceHistory[symbol][0].price;
             const priceChange = ((price - oldestPrice) / oldestPrice) * 100;
 
-            if (priceChange >= PRICE_CHANGE_THRESHOLD) {
+            if (priceChange >= changePercentage) {
                 const opportunity = `${symbol}: ${priceChange.toFixed(2)}% change (Old: ${oldestPrice}, New: ${price})`;
 
                 // Check if this opportunity has already been sent
@@ -64,12 +80,14 @@ const sniper = async (bot, chatId) => {
             for (let opportunity of arbitrageOpportunities) {
                 await bot.sendMessage(
                     chatId,
-                    `Arbitrage opportunity detected:\n${opportunity}`
+                    `Price change detected:\n${opportunity}`
                 );
             }
         }
     } catch (error) {
-        console.error('Error in monitorArbitrage:', error);
+        console.error('Error in main sniper block:', error);
+
+        logErrorToFile(error, chatId, bot);
     }
 };
 
