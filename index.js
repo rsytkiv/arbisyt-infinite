@@ -2,16 +2,16 @@ const TelegramBot = require('node-telegram-bot-api');
 
 const { isAuthorized, help } = require('./helpers/helpers');
 const { getTickerInfo } = require('./helpers/getTickerInfo');
-const { sniper } = require('./helpers/startSniping');
+const { snipePumpAndDump } = require('./commands/snipePumpAndDump');
 
 const {
     ADMIN_USER_ID,
     AUTHORIZED_USERS,
     DEFAULT_EXCHANGES,
     PRICE_CHANGE_THRESHOLD,
-    DEFAULT_PAIRS,
 } = require('./constants');
 const { logErrorToFile } = require('./helpers/logError');
+const { sendMessageWithHTML } = require('./helpers/utils');
 
 require('dotenv').config();
 
@@ -27,25 +27,23 @@ bot.onText(/.*/, ({ from }) => {
 
 bot.onText(/\/snipe/, async ({ chat, from }, match) => {
     try {
-        if (!isAuthorized(from?.id)) return bot.sendMessage(chat?.id, 'You are not authorized to interact with this bot.');
+        if (!isAuthorized(from?.id)) return bot.sendMessage(chat?.id, '⛔️ You are not authorized to interact with this bot.');
 
         if (!sniperIntervalId) {
             const inputArray = match?.input.split(' ');
 
-            const changePercentage = inputArray[2] || PRICE_CHANGE_THRESHOLD;
+            const changePercentage = Number(inputArray[2]) || PRICE_CHANGE_THRESHOLD;
             const exchanges = inputArray[1]?.split(',') || DEFAULT_EXCHANGES;
-            const pairsToDetect = inputArray[3]?.split(',') || DEFAULT_PAIRS;
 
-            bot.sendMessage(chat?.id, `Current settings:\nExchanges: ${exchanges.map((e) => e)}\nPrice change percentage: ${changePercentage}% \nPairs: ${pairsToDetect?.map((i) => i)}`);
+            sendMessageWithHTML(bot, chat?.id, `⚙️ <b>Current settings:</b>\n<b>Exchanges:</b> ${exchanges.map((e) => e)}\n<b>Price change percentage:</b> ${changePercentage}%`);
             bot.sendMessage(chat?.id, 'Sniping started...');
 
             sniperIntervalId = setInterval(() => {
-                sniper(
+                snipePumpAndDump(
                     bot,
                     chat?.id,
                     exchanges,
                     changePercentage,
-                    pairsToDetect,
                 ).catch(console.error);
             }, 30000);
         } else {
@@ -68,16 +66,16 @@ bot.onText(/\/stopsnipe/, ({ chat, from }) => {
     }
 });
 
-bot.onText('/\/adduser/', ({ chat, from }) => {
+bot.onText(/\/adduser/, ({ chat, from }, match) => {
     const chatId = chat?.id;
     const userId = from?.id;
 
     try {
         // Check if the sender is the admin
-        if (userId === ADMIN_USER_ID) {
-            const newUserId = parseInt(text.split(' ')[1], 10);
+        if (userId.toString() === ADMIN_USER_ID) {
+            const newUserId = parseInt(match?.input.split(' ')[1], 10).toString();
 
-            if (!isNaN(newUserId) && !AUTHORIZED_USERS.includes(newUserId)) {
+            if (newUserId && !AUTHORIZED_USERS.includes(newUserId)) {
                 AUTHORIZED_USERS.push(newUserId);
 
                 bot.sendMessage(chatId, `User ${newUserId} has been added to the authorized list.`);
