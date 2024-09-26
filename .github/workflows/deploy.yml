@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+
 # on:
 #   pull_request:
 #     types:
@@ -35,6 +36,4 @@ jobs:
       - name: Restart Telegram bot
         run: |
           cd runner
-          npm install -g pm2
-          pm2 stop bot
-          pm2 start index.js --name bot
+          screen -S botSession node index.js
