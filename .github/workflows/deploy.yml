@@ -1,12 +1,15 @@
 name: Deploy Bot to Server
 
 on:
-  push:
+  pull_request:
+    types:
+      - closed
     branches:
       - main
 
 jobs:
   deploy:
+    if: github.event.pull_request.merged == true
     runs-on: self-hosted
     steps:
       - name: Checkout repository
