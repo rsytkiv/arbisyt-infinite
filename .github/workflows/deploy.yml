@@ -21,13 +21,10 @@ jobs:
         with:
           path: runner
 
-      - name: Navigate to bot project
+      - name: Pull latest changes on the server
         run: |
           cd runner
           pwd
-
-      - name: Pull latest changes on the server
-        run: |
           git pull origin main
 
       - name: Install dependencies
