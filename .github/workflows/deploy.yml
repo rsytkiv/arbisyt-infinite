@@ -35,5 +35,6 @@ jobs:
       - name: Restart Telegram bot
         run: |
           cd runner
+          npm install -g pm2
           pm2 stop bot
           pm2 start src/index.js --name bot
