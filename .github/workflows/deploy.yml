@@ -35,5 +35,7 @@ jobs:
 
       - name: Restart Telegram bot
         run: |
+          pwd
           cd runner
+          pwd
           screen -S botSession node index.js
