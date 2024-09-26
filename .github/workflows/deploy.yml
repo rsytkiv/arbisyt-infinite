@@ -23,13 +23,11 @@ jobs:
 
       - name: Navigate to bot project
         run: |
-          cd ../../../../projects/arbisyt-infinite
-          echo "Changed directory"
+          cd runner
           pwd
 
       - name: Pull latest changes on the server
         run: |
-          pwd
           git pull origin main
 
       - name: Install dependencies
