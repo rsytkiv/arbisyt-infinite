@@ -23,7 +23,7 @@ jobs:
 
       - name: Navigate to bot project
         run: |
-          cd ../../
+          cd ../../../../projects/arbisyt-infinite
           echo "Changed directory"
           pwd
 
