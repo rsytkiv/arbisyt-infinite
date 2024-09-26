@@ -1,15 +1,20 @@
 name: Deploy Bot to Server and start
 
 on:
-  pull_request:
-    types:
-      - closed
+  push:
     branches:
       - main
 
+# on:
+#   pull_request:
+#     types:
+#       - closed
+#     branches:
+#       - main
+
 jobs:
   deploy:
-    if: github.event.pull_request.merged == true
+    # if: github.event.pull_request.merged == true
     runs-on: self-hosted
     steps:
       - name: Checkout repository
@@ -19,6 +24,8 @@ jobs:
 
       - name: Navigate to bot project
         run: cd ../../
+          echo "Changed directory"
+          pwd
 
       - name: Pull latest changes on the server
         run: git pull origin main
