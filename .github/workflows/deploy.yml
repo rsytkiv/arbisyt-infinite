@@ -14,6 +14,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          path: runner
+
+      - name: Navigate to bot project
+        run: cd runner/projects/bot
 
       - name: Pull latest changes on the server
         run: git pull origin main
