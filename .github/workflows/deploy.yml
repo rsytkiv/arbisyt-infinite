@@ -25,7 +25,6 @@ jobs:
       - name: Pull latest changes on the server
         run: |
           cd runner
-          cp .env .env.backup
           git fetch origin
           git reset --hard origin/main
           cp .env.backup .env
