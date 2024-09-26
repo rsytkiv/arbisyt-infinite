@@ -22,7 +22,8 @@ jobs:
           path: runner
 
       - name: Navigate to bot project
-        run: cd ../../
+        run: |
+          cd ../../
           echo "Changed directory"
           pwd
 
