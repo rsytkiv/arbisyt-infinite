@@ -25,7 +25,7 @@ jobs:
       - name: Pull latest changes on the server
         run: |
           cd runner
-          git pull
+          git pull origin main
 
       - name: Install dependencies
         run: |
