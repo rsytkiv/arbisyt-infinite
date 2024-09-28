@@ -28,10 +28,9 @@ jobs:
       - name: Pull latest changes on the server
         run: |
           cd runner
+          env
           git fetch origin
           git reset --hard origin/main
-          cp .env.backup .env
-          cat .env
 
       - name: Install dependencies
         run: |
