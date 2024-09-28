@@ -39,6 +39,7 @@ jobs:
 
       - name: Set environment variables
         run: |
+          cd runner
           echo "TELEGRAM_BOT_KEY=${{ secrets.TELEGRAM_BOT_KEY }}" >> .env
           echo "BINANCE_KEY=${{ secrets.BINANCE_KEY }}" >> .env
           echo "BINANCE_SECRET=${{ secrets.BINANCE_SECRET }}" >> .env
