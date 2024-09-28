@@ -42,8 +42,10 @@ jobs:
           echo "TELEGRAM_BOT_KEY=${{ secrets.TELEGRAM_BOT_KEY }}" >> .env
           echo "BINANCE_KEY=${{ secrets.BINANCE_KEY }}" >> .env
           echo "BINANCE_SECRET=${{ secrets.BINANCE_SECRET }}" >> .env
+          cat .env
 
       - name: Restart Telegram bot
         run: |
           cd runner
+          cat .env
           nodemon /index.js --name bot
