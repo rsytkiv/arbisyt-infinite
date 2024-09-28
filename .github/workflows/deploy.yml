@@ -2,14 +2,19 @@ name: Deploy Bot to Server and start
 
 on:
   pull_request:
-    types:
-      - closed
     branches:
       - main
 
+# on:
+#   pull_request:
+#     types:
+#       - closed
+#     branches:
+#       - main
+
 jobs:
   deploy:
-    if: github.event.pull_request.merged == true
+    # if: github.event.pull_request.merged == true
     runs-on: self-hosted
     steps:
       - name: Checkout repository
@@ -17,16 +22,28 @@ jobs:
         with:
           path: runner
 
-      - name: Navigate to bot project
-        run: cd ../../
+      - name: Create backup .env file
+        run: cp ../../../../projects/arbisyt-infinite/.env .env.backup
 
       - name: Pull latest changes on the server
-        run: git pull origin main
+        run: |
+          cd runner
+          git fetch origin
+          git reset --hard origin/main
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          cd runner
+          npm install
+
+      - name: Set environment variables
+        run: |
+          cd runner
+          echo "TELEGRAM_BOT_KEY=${{ secrets.TELEGRAM_BOT_KEY }}" >> .env
+          echo "BINANCE_KEY=${{ secrets.BINANCE_KEY }}" >> .env
+          echo "BINANCE_SECRET=${{ secrets.BINANCE_SECRET }}" >> .env
 
       - name: Restart Telegram bot
         run: |
-          pm2 stop bot
-          pm2 start src/index.js --name bot
+          cd runner
+          nodemon /index.js --name bot
