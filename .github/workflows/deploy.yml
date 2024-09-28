@@ -28,7 +28,6 @@ jobs:
       - name: Pull latest changes on the server
         run: |
           cd runner
-          forever stop index.js
           env
           git fetch origin
           git reset --hard origin/main
@@ -41,4 +40,4 @@ jobs:
       - name: Restart Telegram bot
         run: |
           cd runner
-          forever start index.js
+          nodemon /index.js --name bot
