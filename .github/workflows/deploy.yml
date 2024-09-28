@@ -29,6 +29,7 @@ jobs:
         run: |
           cd runner
           env
+          echo TELEGRAM_BOT_KEY
           git fetch origin
           git reset --hard origin/main
 
