@@ -28,8 +28,8 @@ jobs:
       - name: Pull latest changes on the server
         run: |
           cd runner
+          forever stop index.js
           env
-          echo TELEGRAM_BOT_KEY
           git fetch origin
           git reset --hard origin/main
 
