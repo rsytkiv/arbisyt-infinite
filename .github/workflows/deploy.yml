@@ -37,6 +37,12 @@ jobs:
           cd runner
           npm install
 
+      - name: Set environment variables
+        run: |
+          echo "BOT_TOKEN=${{ secrets.BOT_TOKEN }}" >> .env
+          echo "BINANCE_KEY=${{ secrets.BINANCE_KEY }}" >> .env
+          echo "BINANCE_SECRET=${{ secrets.BINANCE_SECRET }}" >> .env
+
       - name: Restart Telegram bot
         run: |
           cd runner
